@@ -5,8 +5,13 @@ This project is a student-to-student marketplace built for and by SFSU students.
 🛠 **Tech Stack**
 
 Backend: Flask, Flask-SQLAlchemy, PyMySQL
+
 Frontend: HTML5, CSS3, Jinja2 templates
+
 Database: MySQL (hosted on AWS RDS)
+
 Web Server: Apache2 with WSGI module
+
 Hosting: Deployed on an AWS EC2 instance
+
 Libraries: SQLAlchemy, Jinja2
