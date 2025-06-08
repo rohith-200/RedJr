@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="nav-container">
+                <span class="logo">Group 7</span>
+                <ul>
+                    <li><a href="{{ url_for('home') }}">Home</a></li>
+                    <li><a href="{{ url_for('profiles') }}">Team Profiles</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    
+    <main>
+        <section class="hero">
+            <h1>Welcome to Our 648 Project</h1>
+            <p>We have a plan but we do not have a plan yet. But it will be a great plan.</p>
+            <a href="{{ url_for('profiles') }}" class="btn">Meet The Team</a>
+        </section>
+        <form action="/search_results" method="POST">
+          <label for="category">Choose a category:</label>
+          <select name="category" id="category">
+              <option value="All">ALL</option>
+              <option value="Furniture">Furniture</option>
+              <option value="Tech">Electronics</option>
+              <option value="Books">Books</option>
+              <option value="Clothing">Clothing</option>
+              <option value="Misc">Misc</option>
+          </select>
+
+          <label for="text-search">Search:</label>
+          <input type="text" id=text-search name="query" placeholder="Search Items...">
+
+          <button type="submit">Submit</button>
+        </form>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Group 7 CSCS-648 SFSU. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,219 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>REDJR Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/search-style.css') }}">
+</head>
+
+<body>
+
+ <!-- DISCLAIMER -->
+ <div class="disclaimer">
+  <div class="disclaimer-inner">
+    SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+  </div>
+</div>
+
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">
+    <span class="logo-full">REDJR Marketplace</span>
+    <span class="logo-short">REDJR</span>
+  </div>
+  
+
+  <form class="search-bar" action="{{ url_for('search.search_results') }}" method="post">
+    <select name="category">
+      <option value="All">All</option>
+      <option value="Tech">Electronics</option>
+      <option value="Books">Books</option>
+      <option value="Furniture">Furniture</option>
+      <option value="Clothing">Clothing</option>
+      <option value="Misc">Miscellaneous</option>
+    </select>
+    <input type="text" name="query" placeholder="Search..." />
+    <button type="submit">Search</button>
+  </form>
+
+  <div class="nav-container">
+    <!-- DESKTOP LINKS -->
+    <div class="desktop-nav-links">
+      <a href="/">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </div>
+
+    <!-- HAMBURGER FOR MOBILE -->
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDE DRAWER MENU (Mobile only) -->
+<div id="sideDrawer" class="side-drawer">
+  <button class="close-btn" onclick="toggleMenu()">✕</button>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/profiles">About</a>
+    {% if session.get('user_id') %}
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login">Login/Sign Up</a>
+    {% endif %}
+  </nav>
+</div>
+
+<!-- OVERLAY -->
+<div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h1>Where SFSU Students Buy, Sell, and Trade</h1>
+      {% if session.get('user_id') %}
+      <a href="/new_listing" class="hero-button">Post Listing</a>
+    {% else %}
+      <a href="/login" class="hero-button">Post Listing</a>
+    {% endif %}
+    
+    </div>
+  </section>
+
+  <!-- FEATURES SECTION -->
+  <section class="feature-row">
+    <div class="feature">
+      <div class="icon">⚡</div>
+      <h3>Easy to Use</h3>
+      <p>Post, buy, browse, and message with just a few clicks.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🎓</div>
+      <h3>Made for SFSU</h3>
+      <p>Student-to-student deals. No outside listings.</p>
+    </div>
+    <div class="feature">
+      <div class="icon">🔒</div>
+      <h3>Safe & Secure</h3>
+      <p>SFSU email required to keep things local and trusted.</p>
+    </div>
+  </section>
+
+  <!-- RECENT ITEMS SECTION -->
+  <section class="recent-items">
+    <div class="recent-header">
+      <hr>
+      <h2>Recently Posted</h2>
+    </div>
+    <div id="recent-items-container" class="items-grid">
+      <!-- JS will populate this -->
+    </div>
+  </section>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/recent-items?limit=6')
+        .then(response => response.json())
+        .then(data => {
+          const container = document.getElementById('recent-items-container');
+          container.innerHTML = '';
+  
+          if (!data.items || data.items.length === 0) {
+            container.innerHTML = "<p>No recent items found.</p>";
+            return;
+          }
+  
+          data.items.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'item-card';
+            card.innerHTML = `
+              <a href="/item/${item.item_id}" class="item-link">
+                <img src="/image/${item.image_id}" alt="Item Image">
+                <h3>${item.title}</h3>
+                <p>$${item.price}</p>
+              </a>
+              <button class="save-btn" data-item-id="${item.item_id}" title="Save for later">
+                <svg class="heart-icon" viewBox="0 0 24 24" width="24" height="24">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                           2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                           C13.09 3.81 14.76 3 16.5 3
+                           19.58 3 22 5.42 22 8.5
+                           c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+                </svg>
+              </button>
+            `;
+            container.appendChild(card);
+          });
+        })
+        .catch(error => {
+          console.error('Error fetching recent items:', error);
+        });
+    });
+  
+    document.addEventListener('click', async (e) => {
+      if (e.target.closest('.save-btn')) {
+        const btn = e.target.closest('.save-btn');
+        const itemId = btn.dataset.itemId;
+  
+        // Show heart as red immediately
+        btn.classList.add('saved');
+  
+        const icon = btn.querySelector('.heart-icon');
+        icon.classList.remove('heart-icon');
+        void icon.offsetWidth;
+        icon.classList.add('heart-icon');
+  
+        // Revert after 800ms
+        setTimeout(() => {
+          btn.classList.remove('saved');
+        }, 800);
+  
+        try {
+          const res = await fetch('/api/save-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: itemId })
+          });
+  
+          const result = await res.json();
+          if (!result.success) {
+            alert(result.message || 'Failed to save item.');
+          }
+        } catch (err) {
+          alert('Error saving item.');
+          console.error(err);
+        }
+      }
+    });
+  
+    function toggleMenu() {
+      const drawer = document.getElementById('sideDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+  </script>
+  
+
+</body>
+</html>

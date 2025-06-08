@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search Results</title>
+  <link rel="stylesheet" href="search-style.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" action="results.html" method="get">
+      <select name="category">
+        <option value="all">All</option>
+        <option value="electronics">Electronics</option>
+        <option value="books">Books</option>
+        <option value="furniture">Furniture</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-links">
+      <a href="search.html">Home</a>
+      <a href="#">Browse</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="#">Login/Sign Up</a>
+    </div>
+  </div>
+  <h1>Search Results</h1>
+  <div id="results"></div>
+  <script src="script.js"></script>
+</body>
+</html>

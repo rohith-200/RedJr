@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Search Results</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/search-style.css') }}">
+</head>
+
+<body>
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+
+
+  <!-- NAVBAR -->
+  <div class="navbar">
+    <div class="logo">
+      <span class="logo-full">REDJR Marketplace</span>
+      <span class="logo-short">REDJR</span>
+    </div>
+
+    <form class="search-bar" action="{{ url_for('search.search_results') }}" method="post">
+      <select name="category">
+        <option value="All">All</option>
+        <option value="Tech">Electronics</option>
+        <option value="Books">Books</option>
+        <option value="Furniture">Furniture</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Misc">Miscellaneous</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." value="{{ query or '' }}" />
+      <button type="submit">Search</button>
+    </form>
+
+    <div class="nav-container">
+      <!-- DESKTOP LINKS -->
+      <div class="desktop-nav-links">
+        <a href="/">Home</a>
+        <a href="/profiles">About</a>
+        {% if session.get('user_id') %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        {% else %}
+          <a href="/login">Login/Sign Up</a>
+        {% endif %}
+      </div>
+
+      <!-- HAMBURGER FOR MOBILE -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <!-- SIDE DRAWER MENU (Mobile only) -->
+  <div id="sideDrawer" class="side-drawer">
+    <button class="close-btn" onclick="toggleMenu()">✕</button>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </nav>
+  </div>
+
+  <!-- OVERLAY -->
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+
+
+  <div class="main-content">
+
+    {% if query %}
+      <h2>Results for "{{ query }}"</h2>
+    {% else %}
+      <h2>Search Results</h2>
+    {% endif %}
+
+    <p>Category: {{ category_name }}</p>
+    <p>Total results: {{ items|length }}</p>
+        <!-- sorting Dropdown -->
+    <div class="sort-container">
+      <label for="sortSelect">Sort by:</label>
+      <select id="sortSelect">
+        <option value="">Date: Oldest</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+        <option value="date_desc">Date: Newest</option>
+      </select>
+    </div>
+    <div class="card-container" id="cardContainer">
+      {% for item in items %}
+        <div class="result-card">
+          <h3>{{ item.title }}</h3>
+          {% if images_map[item.item_id] %}
+            <img class="result-img" src="{{ url_for('image', image_id=images_map[item.item_id][0]) }}" alt="Image for {{ item.title }}">
+          {% else %}
+            <div class="placeholder-img">No Image</div>
+          {% endif %}
+          <p class="price">${{ item.price }}</p>
+          <a href="/item/{{ item.item_id }}" class="contact-seller-btn">View Item</a>
+          <button class="save-btn" data-item-id="{{ item.item_id }}" title="Save for later">
+            <svg class="heart-icon" viewBox="0 0 24 24" width="24" height="24">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                       2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                       C13.09 3.81 14.76 3 16.5 3
+                       19.58 3 22 5.42 22 8.5
+                       c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+            </svg>
+          </button>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <script>
+
+    <!-- turning items dictionary to a json for sorting options -->
+    const items = {{ items_dict | tojson }};
+
+    document.addEventListener('click', async (e) => {
+      if (e.target.closest('.save-btn')) {
+        const btn = e.target.closest('.save-btn');
+        const itemId = btn.dataset.itemId;
+
+        // Visual feedback
+        btn.classList.add('saved');
+        const icon = btn.querySelector('.heart-icon');
+        icon.classList.remove('heart-icon');
+        void icon.offsetWidth;
+        icon.classList.add('heart-icon');
+
+        setTimeout(() => {
+          btn.classList.remove('saved');
+        }, 800);
+
+        try {
+          const res = await fetch('/api/save-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: itemId })
+          });
+
+          const result = await res.json();
+          if (!result.success) {
+            alert(result.message || 'Failed to save item.');
+          }
+        } catch (err) {
+          alert('Error saving item.');
+          console.error(err);
+        }
+      }
+    });
+    function toggleMenu() {
+      const drawer = document.getElementById('sideDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+    const cardContainer = document.getElementById('cardContainer');
+  const sortSelect = document.getElementById('sortSelect');
+
+  function renderItems(list) {
+    cardContainer.innerHTML = '';
+
+    if (list.length === 0) {
+      cardContainer.innerHTML = '<p>No items found.</p>';
+      return;
+    }
+
+    list.forEach(item => {
+      const card = `
+        <div class="result-card">
+          <h3>${item.title}</h3>
+          ${item.image_url
+            ? `<img class="result-img" src="${item.image_url}" alt="Image for ${item.title}">`
+            : `<div class="placeholder-img">No Image</div>`}
+          <p class="price">$${item.price.toFixed(2)}</p>
+          <a href="/item/${item.item_id}" class="contact-seller-btn">View Item</a>
+
+          <button class="save-btn" data-item-id="${item.item_id}" title="Save for later">
+          <svg class="heart-icon" viewBox="0 0 24 24" width="24" height="24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09
+                     C13.09 3.81 14.76 3 16.5 3
+                     19.58 3 22 5.42 22 8.5
+                     c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"></path>
+          </svg>
+        </button>
+        </div>
+      `;
+      cardContainer.insertAdjacentHTML('beforeend', card);
+    });
+  }
+
+  // Initial load
+  renderItems(items);
+
+  sortSelect.addEventListener('change', async () => {
+    const sort = sortSelect.value;
+    if (!sort) return renderItems(items);
+
+    try {
+      const res = await fetch('/api/sort-items-list', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sort })
+      });
+
+      const data = await res.json();
+      renderItems(data.items);
+    } catch (err) {
+      console.error('Sort fetch failed:', err);
+      alert('Unable to sort items right now.');
+    }
+  });
+
+  </script>
+
+</body>
+</html>

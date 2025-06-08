@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listing Submitted</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/new-listing.css') }}" />
+</head>
+
+<body>
+  <div class="listing-wrapper">
+    <div class="confirmation-box">
+      <h2>Listing Posted</h2>
+      <p>Your item will be reviewed and posted within 48 hours.</p>
+      <a href="/dashboard" class="button-link">← Back to Dashboard</a>
+    </div>
+  </div>
+</body>
+</html>

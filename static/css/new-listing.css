@@ -1,0 +1,127 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+.listing-wrapper {
+  max-width: 700px;
+  margin: 100px auto;
+  padding: 24px;
+}
+
+.listing-form h2 {
+  text-align: center;
+  color: rgb(73, 23, 73);
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 12px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea,
+input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+textarea {
+  resize: vertical;
+}
+
+.form-button {
+  background-color: #ffcc00;
+  color: black;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+.form-button:hover {
+  background-color: #e6c200;
+}
+
+.required {
+  color: red;
+  font-weight: bold;
+}
+
+.note {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 8px;
+}
+
+.confirmation-box {
+  text-align: center;
+  margin-top: 100px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.confirmation-box h2 {
+  color: rgb(73, 23, 73);
+  margin-bottom: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+@media (max-width: 430px) {
+  .listing-wrapper {
+    margin: 80px 16px;
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  label {
+    font-size: 1rem;
+  }
+
+  input[type="text"],
+  input[type="number"],
+  select,
+  textarea,
+  input[type="file"] {
+    font-size: 1rem;
+    padding: 10px;
+    width: 100%;
+  }
+
+  .form-button {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.05rem;
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    text-align: left;
+    margin-bottom: 16px;
+  }
+
+  .note {
+    font-size: 0.9rem;
+  }
+}

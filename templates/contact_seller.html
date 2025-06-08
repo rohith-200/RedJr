@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Seller</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/contact_seller.css') }}">
+</head>
+
+<body>
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+        <option value="Tech">Electronics</option>
+        <option value="Books">Books</option>
+        <option value="Furniture">Furniture</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-links">
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="contact-wrapper">
+    <div class="item-info">
+      {% if item.image_url %}
+        <img src="{{ item.image_url }}" alt="{{ item.title }}" style="max-width: 200px; border-radius: 8px; margin-bottom: 15px;">
+      {% endif %}
+      <h2>{{ item.title }}</h2>
+      <p><strong>Seller:</strong> {{ seller_name }}</p>
+      <p><strong>Price:</strong> ${{ item.price }}</p>
+    </div>
+
+    <form id="contactForm">
+      <textarea id="customMessage" name="message" required>
+Hi {{ seller_name }}, I'm interested in your item: {{ item.title }} listed for ${{ item.price }}. Is it still available?
+      </textarea>
+      <button type="button" id="submitBtn" class="contact-btn">Send Message</button>
+    </form>
+  </div>
+
+  <div id="overlay" class="overlay"></div>
+  <div id="popup" class="popup-message">
+    Message Sent!
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const btn = document.getElementById('submitBtn');
+      const popup = document.getElementById('popup');
+      const overlay = document.getElementById('overlay');
+
+      btn.addEventListener('click', async function () {
+        const messageContent = document.getElementById('customMessage').value.trim();
+        const urlParams = new URLSearchParams(window.location.search);
+        const receiverId = urlParams.get("seller_id");
+        const itemId = urlParams.get("item_id");
+
+        if (!receiverId || !itemId || !messageContent) {
+          alert("Missing information. Please try again.");
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/message', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              receiver_id: parseInt(receiverId),
+              item_id: parseInt(itemId),
+              content: messageContent
+            })
+          });
+
+          const result = await res.json();
+
+          if (res.ok && result.success) {
+            popup.style.display = 'flex';
+            overlay.style.display = 'block';
+            setTimeout(() => {
+              window.location.href = '/inbox';
+            }, 2000);
+          } else {
+            alert('Message failed: ' + result.message);
+          }
+        } catch (err) {
+          console.error("Fetch error:", err);
+          alert('Error sending message: ' + err.message);
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

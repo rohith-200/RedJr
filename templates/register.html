@@ -1,0 +1,182 @@
+- [x] register.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-Q0T25PL935');
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register | REDJR Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+
+<body class="register-page">
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-container">
+      <div class="desktop-nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="/profiles">About</a>
+        {% if session.get('user_id') %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        {% else %}
+          <a href="/login">Login/Sign Up</a>
+        {% endif %}
+      </div>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <div id="sideDrawer" class="side-drawer">
+    <button class="close-btn" onclick="toggleMenu()">✕</button>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </nav>
+  </div>
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2>Create an Account</h2>
+      <form id="register-form" method="post">
+        <div class="input-wrapper">
+          <div class="form-group">
+            <label for="name"><span class="required">*</span> Full Name</label>
+            <input type="text" id="name" name="name" required>
+          </div>
+      
+          <div class="form-group">
+            <label for="email"><span class="required">*</span> SFSU Email</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+      
+          <div class="form-group">
+            <label for="password"><span class="required">*</span> Password</label>
+            <input type="password" id="password" name="password" required>
+            <ul id="password-checklist">
+              <li id="length" class="invalid">Minimum 12 characters</li>
+              <li id="uppercase" class="invalid">At least one uppercase letter</li>
+              <li id="number" class="invalid">At least one number</li>
+              <li id="symbol" class="invalid">At least one special character</li>
+            </ul>
+          </div>
+      
+          <div class="form-group">
+            <label for="confirm_password"><span class="required">*</span> Confirm Password</label>
+            <input type="password" id="confirm_password" name="confirm_password" required>
+          </div>
+        </div>
+      
+        <div class="form-note">
+          <span class="required-note">* is required field</span>
+        </div>
+      
+        <div class="button-wrapper">
+          <button type="submit" id="signup-btn" disabled>Sign Up</button>
+        </div>
+      </form>            
+    </div>
+  </div>
+
+  <script>
+function toggleMenu() {
+      const drawer = document.getElementById('sideDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+
+    const passwordInput = document.getElementById("password");
+    const confirmInput = document.getElementById("confirm_password");
+    const signupBtn = document.getElementById("signup-btn");
+
+    function validateChecklist(value) {
+      const checks = {
+        length: value.length >= 12,
+        uppercase: /[A-Z]/.test(value),
+        number: /\d/.test(value),
+        symbol: /[!@#$%^&*(),.?":{}|<>]/.test(value)
+      };
+
+      document.getElementById("length").className = checks.length ? "valid" : "invalid";
+      document.getElementById("uppercase").className = checks.uppercase ? "valid" : "invalid";
+      document.getElementById("number").className = checks.number ? "valid" : "invalid";
+      document.getElementById("symbol").className = checks.symbol ? "valid" : "invalid";
+
+      return Object.values(checks).every(Boolean);
+    }
+
+    function updateButtonState() {
+      const password = passwordInput.value;
+      const confirm = confirmInput.value;
+      const checklistValid = validateChecklist(password);
+      const match = password === confirm;
+
+      signupBtn.disabled = !(checklistValid && match);
+    }
+
+    passwordInput.addEventListener("input", updateButtonState);
+    confirmInput.addEventListener("input", updateButtonState);
+
+    document.getElementById("register-form").addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const password = passwordInput.value;
+
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert("Registered successfully!");
+        window.location.href = "/login";
+      } else {
+        alert("Failed: " + data.message);
+      }
+    });
+    function toggleMenu() {
+      const drawer = document.getElementById('sideDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Message Sent</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/contact_seller.css') }}" />
+</head>
+
+<body>
+  <div class="confirmation-wrapper">
+    <div class="confirmation-box">
+      <h2>Message Sent</h2>
+      <p>Your message has been successfully sent to the seller.</p>
+      <a class="inbox-button" href="/inbox">← Return to Inbox</a>
+    </div>
+  </div>
+</body>
+</html>

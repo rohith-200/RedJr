@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Anna</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/messages.css') }}" />
+  <style>
+    form.search-bar {
+      transform: translateX(60px);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+        <option value="Tech">Electronics</option>
+        <option value="Books">Books</option>
+        <option value="Furniture">Furniture</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-links">
+      <a href="/search">Home</a>
+      <a href="#">Browse</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="messaging-wrapper">
+    <div class="return-btn" onclick="window.location.href='/inbox'">
+      ← Return to Inbox
+    </div>
+  
+    <div class="chat-container">
+      <div class="chat-header">
+        <img src="../static/images/person-circle.svg" alt="">Anna Nguyen
+      </div>
+      <div class="chat-box">
+        <div class="message-row received">
+          <img src="../static/images/person-circle.svg" alt="User Avatar" class="avatar">
+          <div class="message">Can you lower the price?</div>
+        </div>
+      </div>
+  
+      <div class="chat-input">
+        <textarea placeholder="Message..." rows="2"></textarea>
+        <button>Send</button>
+      </div>
+    </div>
+  </div>
+  
+  
+  <style>
+    form.search-bar {
+      transform: translateX(39px);
+    }
+    
+
+  </style>
+</body>
+</html>

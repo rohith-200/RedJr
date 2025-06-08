@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Edit Listing | REDJR Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/edit_item.css') }}">
+</head>
+<body>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <div class="disclaimer-inner">
+    SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">REDJR Marketplace</div>
+
+  <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+
+  <div class="nav-container">
+    <div class="desktop-nav-links">
+      <a href="/">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</div>
+
+<!-- SIDE DRAWER MENU (Mobile only) -->
+<div id="sideDrawer" class="side-drawer">
+  <button class="close-btn" onclick="toggleMenu()">✕</button>
+  <nav>
+    <a href="/">Home</a>
+    <a href="/profiles">About</a>
+    {% if session.get('user_id') %}
+      <a href="/dashboard">Dashboard</a>
+      <a href="/logout">Logout</a>
+    {% else %}
+      <a href="/login">Login/Sign Up</a>
+    {% endif %}
+  </nav>
+</div>
+
+<!-- OVERLAY -->
+<div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+<!-- MAIN EDIT FORM -->
+<div class="edit-container">
+  <h2>Edit Your Listing</h2>
+  <form action="{{ url_for('updates_item', item_id=item.item_id) }}" method="POST" enctype="multipart/form-data">
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" value="{{ item.title }}" required>
+
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="4" required>{{ item.description }}</textarea>
+
+    <label for="price">Price ($)</label>
+    <input type="number" id="price" name="price" value="{{ item.price }}" step="0.01" min="0" required>
+
+    <label for="category">Category</label>
+    <select id="category" name="category" required>
+      <option value="Books" {% if item.category == 'Books' %}selected{% endif %}>Books</option>
+      <option value="Electronics" {% if item.category == 'Electronics' %}selected{% endif %}>Electronics</option>
+      <option value="Clothing" {% if item.category == 'Clothing' %}selected{% endif %}>Clothing</option>
+      <option value="Furniture" {% if item.category == 'Furniture' %}selected{% endif %}>Furniture</option>
+      <option value="Misc" {% if item.category == 'Misc' %}selected{% endif %}>Misc</option>
+    </select>
+
+    <label for="image">Update Image (optional)</label>
+    <input type="file" id="image" name="image">
+
+    <button type="submit">Update Listing</button>
+  </form>
+</div>
+
+<script>
+  function toggleMenu() {
+    const drawer = document.getElementById('sideDrawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.toggle('open');
+    overlay.classList.toggle('show');
+  }
+</script>
+
+</body>
+</html>

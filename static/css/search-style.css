@@ -1,0 +1,332 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* ===================== HERO & FEATURE STYLES ===================== */
+.hero-banner {
+  background: url('../images/sfsu-logo.png') center center / cover no-repeat;
+  position: relative;
+  height: 50vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+.hero-banner::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+.hero-content {
+  z-index: 2;
+  position: relative;
+}
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 24px;
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+}
+.hero-button {
+  background-color: #ffcc00;
+  color: black;
+  padding: 12px 24px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+.hero-button:hover {
+  background-color: #e6c200;
+}
+
+/* ===================== FEATURE ROW ===================== */
+.feature-row {
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 32px;
+  padding: 60px 40px;
+}
+.feature {
+  flex: 1;
+  min-width: 250px;
+  max-width: 300px;
+  background-color: rgb(238, 236, 236);
+  padding: 32px 24px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  border: 1px solid black;
+}
+.feature .icon {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+.feature h3 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: #1a1a1a;
+}
+.feature p {
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* ===================== SEARCH RESULTS ===================== */
+.main-content {
+  margin-top: 95px;
+}
+
+/* SEARCH RESULT CARDS */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 24px;
+  padding: 20px;
+  max-width: 100%;
+}
+.result-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+.result-card img {
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto 10px auto;
+}
+.placeholder-img {
+  width: 100%;
+  height: 200px;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  border-radius: 8px;
+}
+.price {
+  font-weight: bold;
+  color: #333;
+  font-size: 1.1rem;
+  text-decoration: none;
+}
+.contact-seller-btn {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 14px;
+  background-color: #ffcc00;
+  color: black;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 0.95rem;
+  transition: background-color 0.2s ease;
+}
+.contact-seller-btn:hover {
+  background-color: #e6c200;
+}
+
+/* ===================== SAVE/HEART BUTTON ===================== */
+.save-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  transition: transform 0.2s ease;
+  z-index: 10;
+}
+.save-btn:active {
+  transform: scale(1.2);
+}
+.heart-icon {
+  fill: none;
+  stroke: black;
+  stroke-width: 2;
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+.save-btn:hover .heart-icon {
+  stroke: red;
+}
+.save-btn.saved .heart-icon {
+  fill: red;
+  stroke: red;
+  animation: pop 0.3s ease;
+}
+@keyframes pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* ===================== RECENT ITEMS ===================== */
+.recent-items {
+  padding: 2rem;
+  background-color: #f8f9fa;
+}
+.recent-items h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.2rem;
+  max-width: 100%;
+  padding: 1rem;
+}
+.item-card {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  text-align: center;
+  padding: 1rem;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+.item-card img {
+  max-width: 100%;
+  max-height: 160px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.item-card h3 {
+  font-size: 1.1rem;
+  margin: 0.5rem 0;
+  color: #333;
+}
+.item-card p {
+  font-size: 1rem;
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
+}
+.item-card a {
+  text-decoration: none;
+  color: inherit;
+}
+.item-card .save-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 2;
+}
+
+/* ===================== SORT DROPDOWN ===================== */
+.sort-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 20px 0;
+  font-size: 14px;
+}
+.sort-container label {
+  font-weight: 600;
+}
+#sortSelect {
+  padding: 6px 36px 6px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  appearance: none;
+  background-color: #fff;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23666' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px;
+  cursor: pointer;
+}
+#sortSelect:hover,
+#sortSelect:focus {
+  border-color: #5c2d91;
+  outline: none;
+}
+
+/* ===================== MEDIA QUERIES ===================== */
+@media (max-width: 768px) {
+  .hero-banner {
+    height: 30vh;
+  }
+  .hero-content h1 {
+    font-size: 1.6rem;
+  }
+  .feature {
+    padding: 16px;
+  }
+  .card-container,
+  .items-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding: 12px;
+  }
+  .result-card,
+  .item-card {
+    padding: 12px;
+  }
+  .result-card img,
+  .item-card img {
+    max-height: 160px;
+  }
+  .contact-seller-btn {
+    padding: 8px 12px;
+    font-size: 0.9rem;
+  }
+  .sort-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 13px;
+  }
+  .items-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* two items per row */
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .item-card {
+    width: 100%; /* let it shrink naturally within grid */
+    max-width: 90%;
+  }
+  .item-card img {
+    width: 100%;
+    height: auto;
+    max-height: 100px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
+  }
+
+  .item-card h3,
+  .item-card p {
+    font-size: 0.9rem;
+  }
+
+  .heart-icon {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+/* For very small screens like iPhone SE */
+

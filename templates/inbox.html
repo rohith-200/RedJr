@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <title>Inbox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inbox.css') }}">
+  <style>
+    form.search-bar {
+      transform: translateX(60px);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-container">
+      <div class="desktop-nav-links">
+        <a href="/search">Home</a>
+        <a href="/profiles">About</a>
+        {% if session.get('user_id') %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        {% else %}
+          <a href="/login">Login/Sign Up</a>
+        {% endif %}
+      </div>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <div id="sideDrawer" class="side-drawer">
+    <button class="close-btn" onclick="toggleMenu()">✕</button>
+    <nav>
+      <a href="/search">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </nav>
+  </div>
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+  <div class="inbox-page">
+    <h1>Inbox</h1>
+    <div class="chat-list" id="chatList">
+      <p>Loading messages...</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('sideDrawer').classList.toggle('open');
+      document.getElementById('drawerOverlay').classList.toggle('show');
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const container = document.getElementById('chatList');
+      try {
+        const res = await fetch('/api/inbox');
+        const data = await res.json();
+        container.innerHTML = '';
+
+        if (data.length === 0) {
+          container.innerHTML = "<p>No messages yet.</p>";
+          return;
+        }
+
+        data.forEach(convo => {
+          const preview = document.createElement('a');
+          preview.className = 'chat-preview';
+          preview.href = convo.item_id !== null && convo.item_id !== undefined
+          ? `/messages/${convo.with_user_id}/${convo.item_id}`
+          : `/messages/${convo.with_user_id}/`;
+
+
+          const latestMessage = convo.messages[convo.messages.length - 1];
+
+          preview.innerHTML = `
+            <img src="/image/${convo.image_id || '1'}" class="avatar" alt="Item">
+            <div class="chat-info">
+              <div class="chat-main">
+                <strong>${convo.with_user_name}</strong>
+                <span class="read-indicator ${latestMessage.is_read ? 'read' : 'unread'}"></span>
+              </div>
+              <p>${latestMessage.content.substring(0, 40)}...</p>
+            </div>
+            <div class="timestamp">${new Date(latestMessage.timestamp).toLocaleString()}</div>
+          `;
+          container.appendChild(preview);
+        });
+      } catch (err) {
+        container.innerHTML = "<p>Error loading messages.</p>";
+        console.error(err);
+      }
+    });
+  </script>
+</body>
+</html>

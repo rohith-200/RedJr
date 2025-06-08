@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Dashboard | REDJR Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  
+</head>
+
+<body>
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-container">
+      <div class="desktop-nav-links">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="/profiles">About</a>
+        {% if session.get('user_id') %}
+          <a href="/dashboard">Dashboard</a>
+          <a href="/logout">Logout</a>
+        {% else %}
+          <a href="/login">Login/Sign Up</a>
+        {% endif %}
+      </div>
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+    </div>
+  </div>
+
+  <div id="sideDrawer" class="side-drawer">
+    <button class="close-btn" onclick="toggleMenu()">✕</button>
+    <nav>
+      <a href="{{ url_for('home') }}">Home</a>
+      <a href="/profiles">About</a>
+      {% if session.get('user_id') %}
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+      {% else %}
+        <a href="/login">Login/Sign Up</a>
+      {% endif %}
+    </nav>
+  </div>
+  <div id="drawerOverlay" class="drawer-overlay" onclick="toggleMenu()"></div>
+
+  <div class="dashboard-wrapper">
+    <div class="sidebar mobile-dropdown">
+      <button class="dropdown-toggle" onclick="toggleQuickAccess()">☰ Quick Access</button>
+      <div id="quickAccessContent" class="dropdown-content">
+        <a href="/new_listing">+ Post New Listing</a>
+        <a href="/inbox">Inbox</a>
+        <a href="#">Account</a>
+      </div>
+    </div>
+
+    <div class="dashboard-container">
+      <h2>Welcome, {{ username }}!</h2>
+
+      <div class="section">
+        <h3>Selling Listings</h3>
+        <div id="selling-listings" class="card-container">
+          <p>Loading...</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Sold Items</h3>
+        <div id="sold-items" class="card-container">
+          <p>Loading...</p>
+        </div>
+      </div>
+
+      <div class="section" style="display: none;">
+        <h3>Saved for Later</h3>
+        <div id="saved-items" class="card-container"></div>
+      </div>
+    </div>
+
+    <div class="saved-sidebar">
+      <h3>Saved Items</h3>
+      <div id="saved-sidebar-items" class="scrollable-saved-items"></div>
+    </div>
+  </div>
+
+  <script>
+ function toggleMenu() {
+      const drawer = document.getElementById('sideDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/dashboard');
+        const data = await res.json();
+
+        renderItems(data.selling_listings, 'selling-listings');
+        renderItems(data.sold_items, 'sold-items');
+        renderItems(data.saved_items, 'saved-items');
+        renderSavedSidebar(data.saved_items);
+      } catch (err) {
+        console.error('Error loading dashboard:', err);
+      }
+    });
+
+    function renderItems(items, containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p>No items found.</p>';
+        return;
+      }
+
+      const isSavedSection = containerId === 'saved-items';
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('item-card');
+
+        const imageSrc = item.image_id ? `/image/${item.image_id}` : '/static/images/placeholder.jpg';
+
+        card.innerHTML = `
+          ${containerId === 'sold-items' ? `<div class='sold-item'>
+            <div class='sold-badge'>SOLD</div>
+            <h4>${item.title}</h4>
+            <img src="${imageSrc}" alt="${item.title}">
+            <p>$${item.price}</p>
+            <p style="font-size: 0.9rem; color: gray;">${item.condition}</p>
+          </div>` : `<a href="/item/${item.item_id}" class="card-link">
+            <h4>${item.title}</h4>
+            <img src="${imageSrc}" alt="${item.title}">
+            <p>$${item.price}</p>
+            <p style="font-size: 0.9rem; color: gray;">${item.condition}</p>
+          </a>`}
+          ${isSavedSection ? `
+            <button class="remove-btn" data-id="${item.item_id}">&times;</button>
+          ` : containerId === 'selling-listings' ? `
+            <div class="item-actions">
+              <button onclick="window.location.href='/edit_item/${item.item_id}'">Edit</button>
+              <button onclick="markAsSold(${item.item_id})">Mark as Sold</button>
+            </div>
+          ` : ``}
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function renderSavedSidebar(items) {
+      const container = document.getElementById('saved-sidebar-items');
+      container.innerHTML = '';
+
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p>No saved items.</p>';
+        return;
+      }
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.classList.add('item-card');
+
+        const imageSrc = item.image_id ? `/image/${item.image_id}` : '/static/images/placeholder.jpg';
+
+        card.innerHTML = `
+          <a href="/item/${item.item_id}" class="card-link">
+            <img src="${imageSrc}" alt="${item.title}">
+            <h5>${item.title}</h5>
+          </a>
+          <button class="remove-icon" data-id="${item.item_id}" title="Remove">&times;</button>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    function markAsSold(itemId) {
+      fetch('/api/mark-sold', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ item_id: itemId })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert('Item marked as sold!');
+          location.reload();
+        } else {
+          alert('Failed to mark as sold.');
+        }
+      })
+      .catch(err => {
+        alert('Error marking item as sold.');
+        console.error(err);
+      });
+    }
+
+    document.addEventListener('click', async (e) => {
+      if (e.target.classList.contains('remove-btn') || e.target.classList.contains('remove-icon')) {
+        const itemId = e.target.dataset.id;
+        if (!itemId) return;
+
+        try {
+          const res = await fetch('/api/remove-saved-item', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ item_id: itemId })
+          });
+
+          const result = await res.json();
+          if (result.success) {
+            const updatedRes = await fetch('/api/dashboard');
+            const updatedData = await updatedRes.json();
+            renderItems(updatedData.saved_items, 'saved-items');
+            renderSavedSidebar(updatedData.saved_items);
+          } else {
+            alert('Failed to remove item.');
+          }
+        } catch (err) {
+          alert('Error removing item.');
+          console.error(err);
+        }
+      }
+      
+    });
+    function toggleQuickAccess() {
+  const content = document.getElementById("quickAccessContent");
+  content.style.display = content.style.display === "block" ? "none" : "block";
+}
+
+  </script>
+</body>
+</html>

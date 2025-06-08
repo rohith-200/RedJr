@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q0T25PL935"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-Q0T25PL935');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Email Verification | REDJR Marketplace</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar-search.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/email_verification.css') }}">
+</head>
+
+<body class="verify-page">
+
+  <div class="disclaimer">
+    <div class="disclaimer-inner">
+      SFSU Software Engineering Project CSC 648-848, Spring 2025. For Demonstration Only
+    </div>
+  </div>
+
+  <div class="navbar">
+    <div class="logo">REDJR Marketplace</div>
+    <form class="search-bar" style="visibility: hidden; pointer-events: none;" action="/search_results" method="post">
+      <select name="category">
+        <option value="All">All</option>
+      </select>
+      <input type="text" name="query" placeholder="Search..." />
+      <button type="submit">Search</button>
+    </form>
+    <div class="nav-links">
+      <a href="/search">Home</a>
+      <a href="#">Browse</a>
+      <a href="/dashboard">Dashboard</a>
+      <a href="/login">Login/Sign Up</a>
+    </div>
+  </div>
+
+  <div class="auth-container">
+    <div class="auth-box">
+      <h2>Email Verification</h2>
+      <p>Please enter the 6-digit code we sent to your SFSU email.</p>
+      <form action="/verify" method="post">
+        <input type="text" name="code" maxlength="6" placeholder="Enter verification code" required>
+        <div class="button-wrapper">
+          <button type="submit">Verify</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
